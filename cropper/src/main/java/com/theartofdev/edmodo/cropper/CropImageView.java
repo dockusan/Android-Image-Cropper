@@ -19,6 +19,7 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
@@ -1827,7 +1828,10 @@ public class CropImageView extends FrameLayout {
    */
   public enum CropShape {
     RECTANGLE,
-    OVAL
+    OVAL,
+    TRIANGLE,
+    HEART,
+    STAR,
   }
   // endregion
 

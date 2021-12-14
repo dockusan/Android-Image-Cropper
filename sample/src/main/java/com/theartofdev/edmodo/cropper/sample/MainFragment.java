@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.example.croppersample.R;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
+import com.theartofdev.edmodo.cropper.PathUtils;
 
 /** The fragment that will show the Image Cropping UI by requested preset. */
 public final class MainFragment extends Fragment
@@ -109,6 +110,9 @@ public final class MainFragment extends Fragment
         break;
       case CIRCULAR:
         rootView = inflater.inflate(R.layout.fragment_main_oval, container, false);
+        break;
+      case TRIANGLE:
+        rootView = inflater.inflate(R.layout.fragment_main_triangle, container, false);
         break;
       case CUSTOMIZED_OVERLAY:
         rootView = inflater.inflate(R.layout.fragment_main_customized, container, false);
@@ -213,10 +217,23 @@ public final class MainFragment extends Fragment
       if (result.getUri() != null) {
         intent.putExtra("URI", result.getUri());
       } else {
-        CropResultActivity.mImage =
-            mCropImageView.getCropShape() == CropImageView.CropShape.OVAL
-                ? CropImage.toOvalBitmap(result.getBitmap())
-                : result.getBitmap();
+        switch (mCropImageView.getCropShape()) {
+          case RECTANGLE:
+            CropResultActivity.mImage = result.getBitmap();
+            break;
+          case OVAL:
+            CropResultActivity.mImage = CropImage.toShapeBitmap(result.getBitmap(), PathUtils.generateOvalPath(result.getBitmap()));
+            break;
+          case TRIANGLE:
+            CropResultActivity.mImage = CropImage.toShapeBitmap(result.getBitmap(), PathUtils.generateTrianglePath(result.getBitmap()));
+            break;
+          case HEART:
+            CropResultActivity.mImage = CropImage.toShapeBitmap(result.getBitmap(), PathUtils.generateHeartPath(result.getBitmap()));
+            break;
+          case STAR:
+            CropResultActivity.mImage = CropImage.toShapeBitmap(result.getBitmap(), PathUtils.generateStarPath(result.getBitmap()));
+            break;
+        }
       }
       startActivity(intent);
     } else {
