@@ -649,7 +649,7 @@ public class CropOverlayView extends View {
         // Draw translucent background for the cropped area.
         drawBackground(canvas);
 
-        if (mCropWindowHandler.showGuidelines()) {
+        if (mCropWindowHandler.showGuidelines() && getCropShape() == CropImageView.CropShape.RECTANGLE) {
             // Determines whether guidelines should be drawn or not
             if (mGuidelines == CropImageView.Guidelines.ON) {
                 drawGuidelines(canvas);
@@ -702,8 +702,7 @@ public class CropOverlayView extends View {
             }
         } else if (mCropShape == CropImageView.CropShape.OVAL) {
             mPath.reset();
-            mDrawRect.set(rect.left, rect.top, rect.right, rect.bottom);
-            mPath.addOval(mDrawRect, Path.Direction.CW);
+            PathUtils.generateOvalPath(rect, mPath);
             canvas.save();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 canvas.clipOutPath(mPath);
@@ -715,12 +714,31 @@ public class CropOverlayView extends View {
         } else if (mCropShape == CropImageView.CropShape.TRIANGLE) {
             mPath.reset();
             mDrawRect.set(rect.left, rect.top, rect.right, rect.bottom);
-            float haftWidth = (rect.right - rect.left) / 2f;
-            mPath.moveTo(rect.left + haftWidth, rect.top); // Top
-            mPath.lineTo(rect.left, rect.bottom); // Bottom left
-            mPath.lineTo(rect.right, rect.bottom); // Bottom right
-            mPath.lineTo(rect.left + haftWidth, rect.top); // Back to Top
-            mPath.close();
+            PathUtils.generateTrianglePath(rect, mPath);
+            canvas.save();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                canvas.clipOutPath(mPath);
+            } else {
+                canvas.clipPath(mPath, Region.Op.XOR);
+            }
+            canvas.drawRect(left, top, right, bottom, mBackgroundPaint);
+            canvas.restore();
+        } else if (mCropShape == CropImageView.CropShape.HEART) {
+            mPath.reset();
+            mDrawRect.set(rect.left, rect.top, rect.right, rect.bottom);
+            PathUtils.generateHeartPath(rect, mPath);
+            canvas.save();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                canvas.clipOutPath(mPath);
+            } else {
+                canvas.clipPath(mPath, Region.Op.XOR);
+            }
+            canvas.drawRect(left, top, right, bottom, mBackgroundPaint);
+            canvas.restore();
+        } else if (mCropShape == CropImageView.CropShape.STAR) {
+            mPath.reset();
+            mDrawRect.set(rect.left, rect.top, rect.right, rect.bottom);
+            PathUtils.generateStarPath(rect, mPath);
             canvas.save();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 canvas.clipOutPath(mPath);
@@ -787,19 +805,13 @@ public class CropOverlayView extends View {
         if (mBorderPaint != null) {
             float w = mBorderPaint.getStrokeWidth();
             RectF rect = mCropWindowHandler.getRect();
+            Path path = mCropWindowHandler.getPath(mCropShape);
             rect.inset(w / 2, w / 2);
-
             if (mCropShape == CropImageView.CropShape.RECTANGLE) {
                 // Draw rectangle crop window border.
                 canvas.drawRect(rect, mBorderPaint);
-            } else if (mCropShape == CropImageView.CropShape.OVAL) {
-                // Draw circular crop window border
-                canvas.drawOval(rect, mBorderPaint);
-            } else if (mCropShape == CropImageView.CropShape.TRIANGLE) {
-                float haftWidth = (rect.right - rect.left) / 2f;
-                canvas.drawLine(rect.left + haftWidth, rect.top, rect.left, rect.bottom, mBorderPaint);
-                canvas.drawLine(rect.left, rect.bottom, rect.right, rect.bottom, mBorderPaint);
-                canvas.drawLine(rect.right, rect.bottom, rect.left + haftWidth, rect.top, mBorderPaint);
+            } else {
+                canvas.drawPath(path, mBorderPaint);
             }
         }
     }
@@ -815,7 +827,7 @@ public class CropOverlayView extends View {
 
             // for rectangle crop shape we allow the corners to be offset from the borders
             float w =
-                    cornerWidth / 2
+//                    cornerWidth / 2
                             + (mCropShape == CropImageView.CropShape.RECTANGLE ? mBorderCornerOffset : 0);
 
             RectF rect = mCropWindowHandler.getRect();
