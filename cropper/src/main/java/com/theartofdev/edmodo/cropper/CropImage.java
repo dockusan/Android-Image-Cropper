@@ -24,6 +24,7 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
@@ -101,7 +102,33 @@ public final class CropImage {
    * Create a new bitmap that has all pixels beyond the oval shape transparent. Old bitmap is
    * recycled.
    */
-  public static Bitmap toOvalBitmap(@NonNull Bitmap bitmap) {
+  public static Bitmap toShapeBitmap(@NonNull Bitmap bitmap, @NonNull Path path) {
+    int width = bitmap.getWidth();
+    int height = bitmap.getHeight();
+    Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+    Canvas canvas = new Canvas(output);
+
+    int color = 0xff424242;
+    Paint paint = new Paint();
+
+    paint.setAntiAlias(true);
+    canvas.drawARGB(0, 0, 0, 0);
+    paint.setColor(color);
+    canvas.drawPath(path, paint);
+    paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+    canvas.drawBitmap(bitmap, 0, 0, paint);
+
+    bitmap.recycle();
+
+    return output;
+  }
+
+  /**
+   * Create a new bitmap that has all pixels beyond the oval shape transparent. Old bitmap is
+   * recycled.
+   */
+  public static Bitmap toTriangleBitmap(@NonNull Bitmap bitmap) {
     int width = bitmap.getWidth();
     int height = bitmap.getHeight();
     Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);

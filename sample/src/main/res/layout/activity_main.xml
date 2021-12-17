@@ -47,6 +47,11 @@
                 style="@style/Cropper.Widget.Drawer.Option.TextView"
                 android:onClick="onDrawerOptionClicked"
                 android:text="@string/drawer_option_oval"/>
+            <TextView
+                android:id="@+id/drawer_option_triangle"
+                style="@style/Cropper.Widget.Drawer.Option.TextView"
+                android:onClick="onDrawerOptionClicked"
+                android:text="@string/drawer_option_triangle"/>
 
             <TextView
                 android:id="@+id/drawer_option_rect"

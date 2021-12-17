@@ -173,6 +173,11 @@ public class MainActivity extends AppCompatActivity {
         setMainFragmentByPreset(CropDemoPreset.CIRCULAR);
         mDrawerLayout.closeDrawers();
         break;
+
+      case R.id.drawer_option_triangle:
+        setMainFragmentByPreset(CropDemoPreset.TRIANGLE);
+        mDrawerLayout.closeDrawers();
+        break;
       case R.id.drawer_option_rect:
         setMainFragmentByPreset(CropDemoPreset.RECT);
         mDrawerLayout.closeDrawers();
