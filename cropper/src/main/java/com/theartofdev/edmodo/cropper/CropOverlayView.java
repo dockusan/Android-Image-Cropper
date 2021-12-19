@@ -649,18 +649,17 @@ public class CropOverlayView extends View {
         // Draw translucent background for the cropped area.
         drawBackground(canvas);
 
-        if (mCropWindowHandler.showGuidelines() && getCropShape() == CropImageView.CropShape.RECTANGLE) {
-            // Determines whether guidelines should be drawn or not
-            if (mGuidelines == CropImageView.Guidelines.ON) {
-                drawGuidelines(canvas);
-            } else if (mGuidelines == CropImageView.Guidelines.ON_TOUCH && mMoveHandler != null) {
-                // Draw only when resizing
-                drawGuidelines(canvas);
-            }
-        }
-
+//        if (mCropWindowHandler.showGuidelines() && getCropShape() == CropImageView.CropShape.RECTANGLE) {
+//            // Determines whether guidelines should be drawn or not
+//            if (mGuidelines == CropImageView.Guidelines.ON) {
+//                drawGuidelines(canvas);
+//            } else if (mGuidelines == CropImageView.Guidelines.ON_TOUCH && mMoveHandler != null) {
+//                // Draw only when resizing
+//                drawGuidelines(canvas);
+//            }
+//        }
+//
         drawBorders(canvas);
-
         drawCorners(canvas);
     }
 
